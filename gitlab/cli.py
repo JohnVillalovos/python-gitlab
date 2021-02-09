@@ -25,7 +25,10 @@ import sys
 
 import gitlab.config
 
-camel_re = re.compile("(.)([A-Z])")
+# Full credit for this regex goes to:
+# https://github.com/jpvanhal/inflection/blob/master/inflection/__init__.py
+camel_re = re.compile(r"([A-Z]+)([A-Z][a-z])")
+camel_re2 = re.compile(r"([a-z\d])([A-Z])")
 
 # custom_actions = {
 #    cls: {
@@ -75,7 +78,8 @@ def what_to_cls(what):
 
 
 def cls_to_what(cls):
-    return camel_re.sub(r"\1-\2", cls.__name__).lower()
+    what = camel_re.sub(r"\1-\2", cls.__name__)
+    return camel_re2.sub(r"\1-\2", what).lower()
 
 
 def _get_base_parser(add_help=True):

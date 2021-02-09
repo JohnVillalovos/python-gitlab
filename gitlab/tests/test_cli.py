@@ -26,12 +26,19 @@ from contextlib import redirect_stderr  # noqa: H302
 import pytest
 
 from gitlab import cli
+from gitlab.v4.objects import CurrentUserGPGKey
 import gitlab.v4.cli
 
 
 def test_what_to_cls():
     assert "Foo" == cli.what_to_cls("foo")
     assert "FooBar" == cli.what_to_cls("foo-bar")
+
+
+def test_what_to_cls_v4(gl):
+    what = "current-user-gpg-key"
+    g_cli = gitlab.v4.cli.GitlabCLI(gl, what, "list", [])
+    assert CurrentUserGPGKey == g_cli.what_to_cls(what)
 
 
 def test_cls_to_what():
@@ -41,8 +48,12 @@ def test_cls_to_what():
     class TestClass(object):
         pass
 
+    class TestUPPERClass(object):
+        pass
+
     assert "test-class" == cli.cls_to_what(TestClass)
     assert "class" == cli.cls_to_what(Class)
+    assert "test-upper-class" == cli.cls_to_what(TestUPPERClass)
 
 
 def test_die():

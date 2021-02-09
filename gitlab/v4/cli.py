@@ -20,6 +20,8 @@ import inspect
 import operator
 import sys
 
+from requests.structures import CaseInsensitiveDict
+
 import gitlab
 import gitlab.base
 from gitlab import cli
@@ -28,8 +30,9 @@ import gitlab.v4.objects
 
 class GitlabCLI(object):
     def __init__(self, gl, what, action, args):
-        self.cls_name = cli.what_to_cls(what)
-        self.cls = gitlab.v4.objects.__dict__[self.cls_name]
+        self.classes = gitlab.v4.objects.__dict__
+        self.cls = self.what_to_cls(what)
+        self.cls_name = self.cls.__name__
         self.what = what.replace("-", "_")
         self.action = action.lower()
         self.gl = gl
@@ -63,6 +66,12 @@ class GitlabCLI(object):
 
         # Finally try to find custom methods
         return self.do_custom()
+
+    def what_to_cls(self, what):
+        """Case-insensitive lookup of module class names from CLI args"""
+        classes = CaseInsensitiveDict(self.classes)
+        lowercase_class = what.replace("-", "")
+        return classes[lowercase_class]
 
     def do_custom(self):
         in_obj = cli.custom_actions[self.cls_name][self.action][2]
