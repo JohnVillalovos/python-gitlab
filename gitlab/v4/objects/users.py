@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from gitlab import cli, types
 from gitlab import exceptions as exc
 from gitlab.base import RESTManager, RESTObject
@@ -60,7 +62,7 @@ class CurrentUserEmail(ObjectDeleteMixin, RESTObject):
 class CurrentUserEmailManager(RetrieveMixin, CreateMixin, DeleteMixin, RESTManager):
     _path = "/user/emails"
     _obj_cls = CurrentUserEmail
-    _create_attrs = (("email",), tuple())
+    _create_attrs: Tuple[Tuple[str, ...], Tuple[str, ...]] = (("email",), tuple())
 
 
 class CurrentUserGPGKey(ObjectDeleteMixin, RESTObject):
@@ -70,7 +72,7 @@ class CurrentUserGPGKey(ObjectDeleteMixin, RESTObject):
 class CurrentUserGPGKeyManager(RetrieveMixin, CreateMixin, DeleteMixin, RESTManager):
     _path = "/user/gpg_keys"
     _obj_cls = CurrentUserGPGKey
-    _create_attrs = (("key",), tuple())
+    _create_attrs: Tuple[Tuple[str, ...], Tuple[str, ...]] = (("key",), tuple())
 
 
 class CurrentUserKey(ObjectDeleteMixin, RESTObject):
@@ -80,7 +82,7 @@ class CurrentUserKey(ObjectDeleteMixin, RESTObject):
 class CurrentUserKeyManager(RetrieveMixin, CreateMixin, DeleteMixin, RESTManager):
     _path = "/user/keys"
     _obj_cls = CurrentUserKey
-    _create_attrs = (("title", "key"), tuple())
+    _create_attrs: Tuple[Tuple[str, ...], Tuple[str, ...]] = (("title", "key"), tuple())
 
 
 class CurrentUserStatus(SaveMixin, RESTObject):
@@ -91,7 +93,10 @@ class CurrentUserStatus(SaveMixin, RESTObject):
 class CurrentUserStatusManager(GetWithoutIdMixin, UpdateMixin, RESTManager):
     _path = "/user/status"
     _obj_cls = CurrentUserStatus
-    _update_attrs = (tuple(), ("emoji", "message"))
+    _update_attrs: Tuple[Tuple[str, ...], Tuple[str, ...]] = (
+        tuple(),
+        ("emoji", "message"),
+    )
 
 
 class CurrentUser(RESTObject):
@@ -127,7 +132,7 @@ class User(SaveMixin, ObjectDeleteMixin, RESTObject):
 
     @cli.register_custom_action("User")
     @exc.on_http_error(exc.GitlabBlockError)
-    def block(self, **kwargs):
+    def block(self, **kwargs) -> bool:
         """Block the user.
 
         Args:
@@ -148,7 +153,7 @@ class User(SaveMixin, ObjectDeleteMixin, RESTObject):
 
     @cli.register_custom_action("User")
     @exc.on_http_error(exc.GitlabUnblockError)
-    def unblock(self, **kwargs):
+    def unblock(self, **kwargs) -> bool:
         """Unblock the user.
 
         Args:
@@ -169,7 +174,7 @@ class User(SaveMixin, ObjectDeleteMixin, RESTObject):
 
     @cli.register_custom_action("User")
     @exc.on_http_error(exc.GitlabDeactivateError)
-    def deactivate(self, **kwargs):
+    def deactivate(self, **kwargs) -> bool:
         """Deactivate the user.
 
         Args:
@@ -190,7 +195,7 @@ class User(SaveMixin, ObjectDeleteMixin, RESTObject):
 
     @cli.register_custom_action("User")
     @exc.on_http_error(exc.GitlabActivateError)
-    def activate(self, **kwargs):
+    def activate(self, **kwargs) -> bool:
         """Activate the user.
 
         Args:
@@ -226,7 +231,7 @@ class UserManager(CRUDMixin, RESTManager):
         "status",
         "two_factor",
     )
-    _create_attrs = (
+    _create_attrs: Tuple[Tuple[str, ...], Tuple[str, ...]] = (
         tuple(),
         (
             "email",
@@ -255,7 +260,7 @@ class UserManager(CRUDMixin, RESTManager):
             "theme_id",
         ),
     )
-    _update_attrs = (
+    _update_attrs: Tuple[Tuple[str, ...], Tuple[str, ...]] = (
         ("email", "username", "name"),
         (
             "password",
@@ -302,7 +307,7 @@ class UserEmailManager(RetrieveMixin, CreateMixin, DeleteMixin, RESTManager):
     _path = "/users/%(user_id)s/emails"
     _obj_cls = UserEmail
     _from_parent_attrs = {"user_id": "id"}
-    _create_attrs = (("email",), tuple())
+    _create_attrs: Tuple[Tuple[str, ...], Tuple[str, ...]] = (("email",), tuple())
 
 
 class UserActivities(RESTObject):
@@ -333,7 +338,7 @@ class UserGPGKeyManager(RetrieveMixin, CreateMixin, DeleteMixin, RESTManager):
     _path = "/users/%(user_id)s/gpg_keys"
     _obj_cls = UserGPGKey
     _from_parent_attrs = {"user_id": "id"}
-    _create_attrs = (("key",), tuple())
+    _create_attrs: Tuple[Tuple[str, ...], Tuple[str, ...]] = (("key",), tuple())
 
 
 class UserKey(ObjectDeleteMixin, RESTObject):
@@ -344,7 +349,7 @@ class UserKeyManager(ListMixin, CreateMixin, DeleteMixin, RESTManager):
     _path = "/users/%(user_id)s/keys"
     _obj_cls = UserKey
     _from_parent_attrs = {"user_id": "id"}
-    _create_attrs = (("title", "key"), tuple())
+    _create_attrs: Tuple[Tuple[str, ...], Tuple[str, ...]] = (("title", "key"), tuple())
 
 
 class UserIdentityProviderManager(DeleteMixin, RESTManager):
@@ -366,7 +371,10 @@ class UserImpersonationTokenManager(NoUpdateMixin, RESTManager):
     _path = "/users/%(user_id)s/impersonation_tokens"
     _obj_cls = UserImpersonationToken
     _from_parent_attrs = {"user_id": "id"}
-    _create_attrs = (("name", "scopes"), ("expires_at",))
+    _create_attrs: Tuple[Tuple[str, ...], Tuple[str, ...]] = (
+        ("name", "scopes"),
+        ("expires_at",),
+    )
     _list_filters = ("state",)
 
 
@@ -390,7 +398,7 @@ class UserProjectManager(ListMixin, CreateMixin, RESTManager):
     _path = "/projects/user/%(user_id)s"
     _obj_cls = UserProject
     _from_parent_attrs = {"user_id": "id"}
-    _create_attrs = (
+    _create_attrs: Tuple[Tuple[str, ...], Tuple[str, ...]] = (
         ("name",),
         (
             "default_branch",

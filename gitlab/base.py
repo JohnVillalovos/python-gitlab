@@ -38,7 +38,7 @@ class RESTObject(object):
     without ID in the url.
     """
 
-    _id_attr = "id"
+    _id_attr: Optional[str] = "id"
 
     def __init__(self, manager: "RESTManager", attrs: Dict[str, Any]) -> None:
         self.__dict__.update(
