@@ -24,7 +24,7 @@ class ProjectReleaseManager(NoUpdateMixin, RESTManager):
     _create_attrs = (("name", "tag_name", "description"), ("ref", "assets"))
 
 
-class ProjectReleaseLink(RESTObject, ObjectDeleteMixin, SaveMixin):
+class ProjectReleaseLink(ObjectDeleteMixin, SaveMixin, RESTObject):
     pass
 
 

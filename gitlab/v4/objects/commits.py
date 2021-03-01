@@ -157,7 +157,7 @@ class ProjectCommitCommentManager(ListMixin, CreateMixin, RESTManager):
     _create_attrs = (("note",), ("path", "line", "line_type"))
 
 
-class ProjectCommitStatus(RESTObject, RefreshMixin):
+class ProjectCommitStatus(RefreshMixin, RESTObject):
     pass
 
 
