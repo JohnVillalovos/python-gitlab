@@ -1,6 +1,6 @@
 from gitlab import cli, types, utils
 from gitlab import exceptions as exc
-from gitlab.base import RESTManager, RESTObject
+from gitlab.base import RequiredOptional, RESTManager, RESTObject
 from gitlab.mixins import (
     CRUDMixin,
     CreateMixin,
@@ -558,9 +558,9 @@ class Project(RefreshMixin, SaveMixin, ObjectDeleteMixin, RepositoryMixin, RESTO
 class ProjectManager(CRUDMixin, RESTManager):
     _path = "/projects"
     _obj_cls = Project
-    _create_attrs = (
-        tuple(),
-        (
+    _create_attrs = RequiredOptional(
+        required=tuple(),
+        optional=(
             "name",
             "path",
             "namespace_id",
@@ -617,9 +617,9 @@ class ProjectManager(CRUDMixin, RESTManager):
             "packages_enabled",
         ),
     )
-    _update_attrs = (
-        tuple(),
-        (
+    _update_attrs = RequiredOptional(
+        required=tuple(),
+        optional=(
             "name",
             "path",
             "default_branch",
@@ -919,7 +919,7 @@ class ProjectForkManager(CreateMixin, ListMixin, RESTManager):
         "with_issues_enabled",
         "with_merge_requests_enabled",
     )
-    _create_attrs = (tuple(), ("namespace",))
+    _create_attrs = RequiredOptional(required=tuple(), optional=("namespace",))
 
     def create(self, data, **kwargs):
         """Creates a new object.
@@ -949,5 +949,9 @@ class ProjectRemoteMirrorManager(ListMixin, CreateMixin, UpdateMixin, RESTManage
     _path = "/projects/%(project_id)s/remote_mirrors"
     _obj_cls = ProjectRemoteMirror
     _from_parent_attrs = {"project_id": "id"}
-    _create_attrs = (("url",), ("enabled", "only_protected_branches"))
-    _update_attrs = (tuple(), ("enabled", "only_protected_branches"))
+    _create_attrs = RequiredOptional(
+        required=("url",), optional=("enabled", "only_protected_branches")
+    )
+    _update_attrs = RequiredOptional(
+        required=tuple(), optional=("enabled", "only_protected_branches")
+    )

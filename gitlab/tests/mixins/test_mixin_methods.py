@@ -129,30 +129,11 @@ def test_list_other_url(gl):
             obj_list.next()
 
 
-def test_create_mixin_get_attrs(gl):
-    class M1(CreateMixin, FakeManager):
-        pass
-
-    class M2(CreateMixin, FakeManager):
-        _create_attrs = (("foo",), ("bar", "baz"))
-        _update_attrs = (("foo",), ("bam",))
-
-    mgr = M1(gl)
-    required, optional = mgr.get_create_attrs()
-    assert len(required) == 0
-    assert len(optional) == 0
-
-    mgr = M2(gl)
-    required, optional = mgr.get_create_attrs()
-    assert "foo" in required
-    assert "bar" in optional
-    assert "baz" in optional
-    assert "bam" not in optional
-
-
 def test_create_mixin_missing_attrs(gl):
     class M(CreateMixin, FakeManager):
-        _create_attrs = (("foo",), ("bar", "baz"))
+        _create_attrs = base.RequiredOptional(
+            required=("foo",), optional=("bar", "baz")
+        )
 
     mgr = M(gl)
     data = {"foo": "bar", "baz": "blah"}
@@ -166,8 +147,10 @@ def test_create_mixin_missing_attrs(gl):
 
 def test_create_mixin(gl):
     class M(CreateMixin, FakeManager):
-        _create_attrs = (("foo",), ("bar", "baz"))
-        _update_attrs = (("foo",), ("bam",))
+        _create_attrs = base.RequiredOptional(
+            required=("foo",), optional=("bar", "baz")
+        )
+        _update_attrs = base.RequiredOptional(required=("foo",), optional=("bam",))
 
     @urlmatch(scheme="http", netloc="localhost", path="/api/v4/tests", method="post")
     def resp_cont(url, request):
@@ -185,8 +168,10 @@ def test_create_mixin(gl):
 
 def test_create_mixin_custom_path(gl):
     class M(CreateMixin, FakeManager):
-        _create_attrs = (("foo",), ("bar", "baz"))
-        _update_attrs = (("foo",), ("bam",))
+        _create_attrs = base.RequiredOptional(
+            required=("foo",), optional=("bar", "baz")
+        )
+        _update_attrs = base.RequiredOptional(required=("foo",), optional=("bam",))
 
     @urlmatch(scheme="http", netloc="localhost", path="/api/v4/others", method="post")
     def resp_cont(url, request):
@@ -202,30 +187,11 @@ def test_create_mixin_custom_path(gl):
         assert obj.foo == "bar"
 
 
-def test_update_mixin_get_attrs(gl):
-    class M1(UpdateMixin, FakeManager):
-        pass
-
-    class M2(UpdateMixin, FakeManager):
-        _create_attrs = (("foo",), ("bar", "baz"))
-        _update_attrs = (("foo",), ("bam",))
-
-    mgr = M1(gl)
-    required, optional = mgr.get_update_attrs()
-    assert len(required) == 0
-    assert len(optional) == 0
-
-    mgr = M2(gl)
-    required, optional = mgr.get_update_attrs()
-    assert "foo" in required
-    assert "bam" in optional
-    assert "bar" not in optional
-    assert "baz" not in optional
-
-
 def test_update_mixin_missing_attrs(gl):
     class M(UpdateMixin, FakeManager):
-        _update_attrs = (("foo",), ("bar", "baz"))
+        _update_attrs = base.RequiredOptional(
+            required=("foo",), optional=("bar", "baz")
+        )
 
     mgr = M(gl)
     data = {"foo": "bar", "baz": "blah"}
@@ -239,8 +205,10 @@ def test_update_mixin_missing_attrs(gl):
 
 def test_update_mixin(gl):
     class M(UpdateMixin, FakeManager):
-        _create_attrs = (("foo",), ("bar", "baz"))
-        _update_attrs = (("foo",), ("bam",))
+        _create_attrs = base.RequiredOptional(
+            required=("foo",), optional=("bar", "baz")
+        )
+        _update_attrs = base.RequiredOptional(required=("foo",), optional=("bam",))
 
     @urlmatch(scheme="http", netloc="localhost", path="/api/v4/tests/42", method="put")
     def resp_cont(url, request):
@@ -258,8 +226,10 @@ def test_update_mixin(gl):
 
 def test_update_mixin_no_id(gl):
     class M(UpdateMixin, FakeManager):
-        _create_attrs = (("foo",), ("bar", "baz"))
-        _update_attrs = (("foo",), ("bam",))
+        _create_attrs = base.RequiredOptional(
+            required=("foo",), optional=("bar", "baz")
+        )
+        _update_attrs = base.RequiredOptional(required=("foo",), optional=("bam",))
 
     @urlmatch(scheme="http", netloc="localhost", path="/api/v4/tests", method="put")
     def resp_cont(url, request):

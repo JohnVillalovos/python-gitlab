@@ -1,6 +1,6 @@
 from gitlab import cli
 from gitlab import exceptions as exc
-from gitlab.base import RESTManager, RESTObject
+from gitlab.base import RequiredOptional, RESTManager, RESTObject
 from gitlab.mixins import (
     CRUDMixin,
     ListMixin,
@@ -41,9 +41,9 @@ class RunnerManager(CRUDMixin, RESTManager):
     _path = "/runners"
     _obj_cls = Runner
     _list_filters = ("scope",)
-    _create_attrs = (
-        ("token",),
-        (
+    _create_attrs = RequiredOptional(
+        required=("token",),
+        optional=(
             "description",
             "info",
             "active",
@@ -54,9 +54,9 @@ class RunnerManager(CRUDMixin, RESTManager):
             "maximum_timeout",
         ),
     )
-    _update_attrs = (
-        tuple(),
-        (
+    _update_attrs = RequiredOptional(
+        required=tuple(),
+        optional=(
             "description",
             "active",
             "tag_list",
@@ -122,7 +122,7 @@ class GroupRunnerManager(NoUpdateMixin, RESTManager):
     _path = "/groups/%(group_id)s/runners"
     _obj_cls = GroupRunner
     _from_parent_attrs = {"group_id": "id"}
-    _create_attrs = (("runner_id",), tuple())
+    _create_attrs = RequiredOptional(required=("runner_id",), optional=tuple())
 
 
 class ProjectRunner(ObjectDeleteMixin, RESTObject):
@@ -133,4 +133,4 @@ class ProjectRunnerManager(NoUpdateMixin, RESTManager):
     _path = "/projects/%(project_id)s/runners"
     _obj_cls = ProjectRunner
     _from_parent_attrs = {"project_id": "id"}
-    _create_attrs = (("runner_id",), tuple())
+    _create_attrs = RequiredOptional(required=("runner_id",), optional=tuple())
